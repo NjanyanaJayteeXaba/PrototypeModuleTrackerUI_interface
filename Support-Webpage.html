@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Module Tracker</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0033A0',
+                        secondary: '#FFD100',
+                        dark: {
+                            800: '#1f2937',
+                            900: '#111827'
+                        }
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        /* Dark mode styles */
+        .dark {
+            background-color: #1a202c;
+            color: #f7fafc;
+        }
+        .dark .bg-white {
+            background-color: #2d3748;
+        }
+        .dark .text-gray-800 {
+            color: #f7fafc;
+        }
+        .dark .text-gray-600 {
+            color: #cbd5e0;
+        }
+        .dark .text-gray-700 {
+            color: #e2e8f0;
+        }
+        .dark .border-gray-200 {
+            border-color: #4a5568;
+        }
+        .dark .bg-gray-50 {
+            background-color: #1a202c;
+        }
+        .dark .bg-gray-100 {
+            background-color: #4a5568;
+        }
+        .dark .border-gray-300 {
+            border-color: #4a5568;
+        }
+        .dark .text-gray-500 {
+            color: #a0aec0;
+        }
+        .dark .hover\:bg-gray-100:hover {
+            background-color: #4a5568;
+        }
+        .dark .bg-gray-200 {
+            background-color: #4a5568;
+        }
+        .dark .text-gray-400 {
+            color: #a0aec0;
+        }
+        
+        /* Animation for theme transition */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .dark .focus-visible {
+            outline-color: #FFD100;
+        }
+        
+        /* FAQ accordion styles */
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .dark .faq-item {
+            border-bottom-color: #4a5568;
+        }
+        .faq-question {
+            cursor: pointer;
+            padding: 1rem 0;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .faq-answer.open {
+            max-height: 500px;
+        }
+        .faq-toggle {
+            transition: transform 0.3s ease;
+        }
+        .faq-toggle.open {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen dark:bg-gray-900">
+    <!-- Top Navigation -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-10 dark:bg-gray-800 dark:border-gray-700">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="Module-Tracker-Dashboard.html" class="focus-visible">
+                    <img src="cput-logo.png" alt="CPUT Logo" class="h-10">
+                </a>
+                <h1 class="ml-4 text-xl font-semibold text-gray-800 dark:text-white">Module Tracker</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="dark-mode-toggle" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full dark:text-gray-300 dark:hover:bg-gray-700 focus-visible">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-moon-line dark:hidden"></i>
+                        <i class="ri-sun-line hidden dark:block"></i>
+                    </div>
+                </button>
+                <div class="relative">
+                    <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none focus-visible">
+                        <div id="nav-profile-avatar" class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-medium overflow-hidden">
+                            <img id="nav-profile-image" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                            <span id="nav-avatar-initials">NX</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Njanyana Xaba</span>
+                        <div class="w-5 h-5 flex items-center justify-center">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                    </button>
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <a href="Student-Profile-Information.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 focus-visible">Profile</a>
+                        <a href="Settings-Custom.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 bg-gray-100 dark:bg-gray-700 dark:text-white focus-visible">Settings</a>
+                        <a href="Support-Webpage.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 focus-visible">Support</a>
+                        <div class="border-t border-gray-100 my-1 dark:border-gray-700"></div>
+                        <a href="index.html" id="logout-button" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 focus-visible">Log out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-8 text-center">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">Support Center</h2>
+                <p class="text-gray-600 dark:text-gray-400">Find answers to common questions or get in touch with our support team</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Quick Help -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Request Tutor Form -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Request a Tutor</h3>
+                        <form id="tutor-request-form" class="space-y-4">
+                            <div>
+                                <label for="tutor-module" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Module Needing Help</label>
+                                <select id="tutor-module" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <option value="">Select a module</option>
+                                    <option value="ADF262S">Applications Development Fundamentals 2</option>
+                                    <option value="ADP262S">Applications Development Practice 2</option>
+                                    <option value="CNF262S">Communications Networks Fundamentals 2</option>
+                                    <option value="ICE262S">ICT Electives 2 (Python)</option>
+                                    <option value="INM262S">Information Management 2</option>
+                                    <option value="ISA260S">Information Systems Analysis</option>
+                                    <option value="MAF262S">Multimedia Applications Fundamentals 2</option>
+                                    <option value="PRT262S">Project 2</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="tutor-topics" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Specific Topics/Concepts</label>
+                                <textarea id="tutor-topics" rows="3" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="What specific topics do you need help with?"></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="tutor-availability" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Preferred Availability</label>
+                                    <select id="tutor-availability" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">Select preferred time</option>
+                                        <option value="morning">Morning (8am-12pm)</option>
+                                        <option value="afternoon">Afternoon (12pm-4pm)</option>
+                                        <option value="evening">Evening (4pm-8pm)</option>
+                                        <option value="weekend">Weekend</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="tutor-method" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Preferred Method</label>
+                                    <select id="tutor-method" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">Select method</option>
+                                        <option value="in-person">In-person</option>
+                                        <option value="online">Online (Zoom/Teams)</option>
+                                        <option value="either">Either is fine</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="tutor-notes" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Additional Notes</label>
+                                <textarea id="tutor-notes" rows="2" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Any additional information that might help"></textarea>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap dark:bg-secondary dark:text-gray-900">Submit Request</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- FAQ Section -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Frequently Asked Questions</h3>
+                        <div class="space-y-2">
+                            <!-- FAQ Item 1 -->
+                            <div class="faq-item">
+                                <div class="faq-question flex justify-between items-center" onclick="toggleFAQ(1)">
+                                    <span class="font-medium text-gray-800 dark:text-white">How do I track my module progress?</span>
+                                    <div class="faq-toggle w-6 h-6 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                </div>
+                                <div id="faq-answer-1" class="faq-answer px-1">
+                                    <p class="text-gray-600 dark:text-gray-300 pb-4">
+                                        Your module progress is automatically tracked based on your assessment results. 
+                                        Each module card shows your current average percentage and recent test scores. 
+                                        You can view detailed breakdowns by clicking "View Details" on any module card.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- FAQ Item 2 -->
+                            <div class="faq-item">
+                                <div class="faq-question flex justify-between items-center" onclick="toggleFAQ(2)">
+                                    <span class="font-medium text-gray-800 dark:text-white">How do I request a tutor?</span>
+                                    <div class="faq-toggle w-6 h-6 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                </div>
+                                <div id="faq-answer-2" class="faq-answer px-1">
+                                    <p class="text-gray-600 dark:text-gray-300 pb-4">
+                                        You can request a tutor by filling out the "Request a Tutor" form above. 
+                                        Simply select the module you need help with, specify the topics you're struggling with, 
+                                        and indicate your availability. Our team will match you with a suitable tutor within 2-3 business days.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- FAQ Item 3 -->
+                            <div class="faq-item">
+                                <div class="faq-question flex justify-between items-center" onclick="toggleFAQ(3)">
+                                    <span class="font-medium text-gray-800 dark:text-white">How are module averages calculated?</span>
+                                    <div class="faq-toggle w-6 h-6 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                </div>
+                                <div id="faq-answer-3" class="faq-answer px-1">
+                                    <p class="text-gray-600 dark:text-gray-300 pb-4">
+                                        Module averages are calculated based on the weighted scores of your assessments. 
+                                        Each assessment contributes a percentage to your final mark as specified in the module outline. 
+                                        You can view the exact calculation method for each module by clicking "View Details" on the module card.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- FAQ Item 4 -->
+                            <div class="faq-item">
+                                <div class="faq-question flex justify-between items-center" onclick="toggleFAQ(4)">
+                                    <span class="font-medium text-gray-800 dark:text-white">How do I change my account information?</span>
+                                    <div class="faq-toggle w-6 h-6 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                </div>
+                                <div id="faq-answer-4" class="faq-answer px-1">
+                                    <p class="text-gray-600 dark:text-gray-300 pb-4">
+                                        You can update your account information by clicking on your profile picture in the top right corner 
+                                        and selecting "Profile". From there you can edit your personal details, change your password, 
+                                        or update your profile picture.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- FAQ Item 5 -->
+                            <div class="faq-item">
+                                <div class="faq-question flex justify-between items-center" onclick="toggleFAQ(5)">
+                                    <span class="font-medium text-gray-800 dark:text-white">What should I do if I notice incorrect grades?</span>
+                                    <div class="faq-toggle w-6 h-6 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                </div>
+                                <div id="faq-answer-5" class="faq-answer px-1">
+                                    <p class="text-gray-600 dark:text-gray-300 pb-4">
+                                        If you believe there's an error in your recorded grades, please first verify with your lecturer. 
+                                        If the issue persists, contact our support team using the contact information on this page 
+                                        and provide details of the discrepancy.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Contact Info -->
+                <div class="space-y-8">
+                    <!-- Quick Help Card -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Quick Help</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full flex-shrink-0 dark:bg-blue-900/20">
+                                    <i class="ri-phone-line text-blue-500 dark:text-blue-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-800 dark:text-white">Phone Support</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">+27 21 959 6767</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-500">Mon-Fri, 8am-5pm</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-full flex-shrink-0 dark:bg-green-900/20">
+                                    <i class="ri-mail-line text-green-500 dark:text-green-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-800 dark:text-white">Email Support</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">moduletracker@cput.ac.za</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-500">Response within 24 hours</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 flex items-center justify-center bg-purple-100 rounded-full flex-shrink-0 dark:bg-purple-900/20">
+                                    <i class="ri-map-pin-line text-purple-500 dark:text-purple-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-800 dark:text-white">In-Person Support</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">IT Help Desk, 3rd Floor</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-500">Building 12, District Six Campus</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- App Guide Card -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">App Guide</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 flex items-center justify-center bg-yellow-100 rounded-full flex-shrink-0 dark:bg-yellow-900/20">
+                                    <i class="ri-dashboard-line text-yellow-500 dark:text-yellow-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-800 dark:text-white">Dashboard Overview</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">View all your modules at a glance with color-coded performance indicators.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full flex-shrink-0 dark:bg-red-900/20">
+                                    <i class="ri-alert-line text-red-500 dark:text-red-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-800 dark:text-white">Performance Alerts</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Get notified when your grades drop below 50% with tutor recommendations.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 flex items-center justify-center bg-indigo-100 rounded-full flex-shrink-0 dark:bg-indigo-900/20">
+                                    <i class="ri-add-line text-indigo-500 dark:text-indigo-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-800 dark:text-white">Adding Grades</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Use the floating button to manually add grades if they're not automatically recorded.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact Card -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Emergency Contact</h3>
+                        <div class="bg-red-50 rounded-md p-4 dark:bg-red-900/10">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="ri-alarm-warning-line text-red-500 text-xl dark:text-red-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Critical System Issues</h3>
+                                    <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                                        <p>For urgent technical issues preventing access to your grades:</p>
+                                        <p class="mt-1 font-medium">+27 21 959 6999 (24/7)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="hidden fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-green-900/20">
+                    <i class="ri-check-line text-green-500 text-2xl dark:text-green-400"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2 dark:text-white">Tutor Request Submitted!</h3>
+                <p class="text-gray-600 mb-6 dark:text-gray-300">Your tutor request has been received. We'll contact you within 2-3 business days to confirm arrangements.</p>
+                <button onclick="document.getElementById('success-modal').classList.add('hidden')" class="px-4 py-2 bg-primary text-white rounded-button hover:bg-opacity-90 transition-all whitespace-nowrap dark:bg-secondary dark:text-gray-900">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dark mode toggle functionality
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const themeToggle = document.createElement('input');
+            themeToggle.type = 'checkbox';
+            themeToggle.id = 'theme-toggle';
+            themeToggle.className = 'hidden';
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+                themeToggle.checked = true;
+            }
+            
+            darkModeToggle.addEventListener('click', function() {
+                document.documentElement.classList.toggle('dark');
+                const isDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+
+            // User dropdown toggle
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            userMenuButton.addEventListener('click', function() {
+                userDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+
+            // Tutor request form submission
+            const tutorRequestForm = document.getElementById('tutor-request-form');
+            if (tutorRequestForm) {
+                tutorRequestForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // In a real app, you would send the form data to your backend here
+                    document.getElementById('success-modal').classList.remove('hidden');
+                    tutorRequestForm.reset();
+                });
+            }
+        });
+
+        // FAQ toggle function
+        function toggleFAQ(id) {
+            const answer = document.getElementById(`faq-answer-${id}`);
+            const toggle = document.querySelector(`#faq-answer-${id}`).previousElementSibling.querySelector('.faq-toggle');
+            
+            answer.classList.toggle('open');
+            toggle.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

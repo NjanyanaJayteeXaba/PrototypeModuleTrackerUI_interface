@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en" class="text-size-medium">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Tracker - Settings</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .tab-active {
+            color: #0033A0;
+            border-bottom: 2px solid #0033A0;
+        }
+        .dark .tab-active {
+            color: #FFD100;
+            border-bottom-color: #FFD100;
+        }
+        .settings-section {
+            display: none;
+        }
+        .settings-section.active {
+            display: block;
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .dark .slider {
+            background-color: #4b5563;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #0033A0;
+        }
+        .dark input:checked + .slider {
+            background-color: #FFD100;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .font-size-option {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+        .dark .font-size-option {
+            color: white;
+        }
+        .font-size-option.active {
+            border-color: #0033A0;
+            background-color: rgba(0, 51, 160, 0.1);
+        }
+        .dark .font-size-option.active {
+            border-color: #FFD100;
+            background-color: rgba(255, 209, 0, 0.1);
+        }
+        
+        /* Dark mode styles */
+        .dark {
+            background-color: #1f2937;
+            color: #1f2937;
+        }
+        .dark .bg-white {
+            background-color: #111827;
+        }
+        .dark .text-gray-800 {
+            color: #d9dbdf;
+        }
+        .dark .text-gray-700 {
+            color: #dddee2;
+        }
+        .dark .text-gray-600 {
+            color: #d1d5db;
+        }
+        .dark .text-gray-500 {
+            color: #9ca3af;
+        }
+        .dark .border-gray-200 {
+            border-color: #374151;
+        }
+        .dark .bg-gray-100 {
+            background-color: #1f2937;
+        }
+        .dark .bg-gray-50 {
+            background-color: #111827;
+        }
+        .dark .border-gray-300 {
+            border-color: #ffffff;
+        }
+        .dark .hover\:bg-gray-100:hover {
+            background-color: #1f2937;
+        }
+
+        /* Special styling for student number in dark mode */
+        .dark .student-number-field {
+            background-color: white !important;
+            color: black !important;
+            border-color: #d1d5db !important;
+        }
+        .dark .student-number-note {
+            color: #6b7280 !important;
+        }
+        /* Font size classes */
+        .text-size-small {
+            font-size: 0.875rem;
+        }
+        .text-size-medium {
+            font-size: 1rem;
+        }
+        .text-size-large {
+            font-size: 1.125rem;
+        }
+        
+        /* Animation for theme transition */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .dark .focus-visible {
+            outline-color: #FFD100;
+        }
+
+        /* Notification styles */
+        .notification-item.unread {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        .dark .notification-item.unread {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: #0033A0;
+        }
+        .dark .notification-item.unread::before {
+            background-color: #FFD100;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0033A0',
+                        secondary: '#FFD100',
+                        dark: {
+                            800: '#1f2937',
+                            900: '#111827'
+                        }
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Navigation -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-10 dark:bg-gray-900 dark:border-gray-700">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="Module-Tracker-Dashboard.html" class="focus-visible">
+                    <img src="cput-logo.png" alt="CPUT Logo" class="h-10">
+                </a>
+                <h1 class="ml-4 text-xl font-semibold text-gray-800 dark:text-white">Module Tracker</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="dark-mode-toggle" class="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full dark:text-gray-300 dark:hover:bg-gray-700">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-moon-line dark:hidden"></i>
+                        <i class="ri-sun-line hidden dark:block"></i>
+                    </div>
+                </button>
+                <div class="relative">
+                    <button id="notifications-button" class="relative p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full dark:text-gray-300 dark:hover:bg-gray-700 focus-visible">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-notification-3-line"></i>
+                        </div>
+                        <span id="notification-indicator" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    
+                    <!-- Notification Dropdown -->
+                    <div id="notifications-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-20 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="font-semibold text-gray-800 dark:text-white">Notifications</h3>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto">
+                            <div class="notification-item p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer unread dark:border-gray-700 dark:hover:bg-gray-700">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-full flex-shrink-0 dark:bg-red-900/20">
+                                        <i class="ri-alert-line text-red-500 dark:text-red-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                            <p class="text-sm text-gray-800 mb-1 dark:text-gray-200">New grade posted for Project 2 (PRT262S): Assignment 1</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Yesterday</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="notification-item p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full flex-shrink-0 dark:bg-blue-900/20">
+                                            <i class="ri-calendar-line text-blue-500 dark:text-blue-400"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm text-gray-800 mb-1 dark:text-gray-200">Upcoming test for Communications Networks Fundamentals 2 (CNF262S) next week</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">2 days ago</p>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="notification-item p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full flex-shrink-0 dark:bg-blue-900/20">
+                                        <i class="ri-calendar-line text-blue-500 dark:text-blue-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-800 mb-1 dark:text-gray-200">Upcoming test for Database Systems (DBS300S) next week</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">2 days ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 text-center border-t border-gray-200 dark:border-gray-700">
+                            <button id="view-all-notifications" class="text-sm text-primary hover:underline dark:text-secondary">View All Notifications</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none focus-visible">
+                        <div id="profile-avatar" class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-medium">
+                            NX
+                        </div>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Njanyana Xaba</span>
+                        <div class="w-5 h-5 flex items-center justify-center">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                    </button>
+                    <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <a href="Student-Profile-Information.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 focus-visible">Profile</a>
+                        <a href="Settings-Custom.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 bg-gray-100 dark:bg-gray-700 dark:text-white focus-visible">Settings</a>
+                        <a href="Support-Webpage.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 focus-visible">Support</a>
+                        <div class="border-t border-gray-100 my-1 dark:border-gray-700"></div>
+                        <a href="Login-Webpage.html" id="logout-button" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 focus-visible">Log out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- Back Navigation -->
+        <div class="mb-6">
+            <a href="Module-Tracker-Dashboard.html" class="inline-flex items-center text-primary hover:underline dark:text-secondary focus-visible">
+                <div class="w-5 h-5 mr-1 flex items-center justify-center">
+                    <i class="ri-arrow-left-line"></i>
+                </div>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+        
+        <!-- Settings Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2 dark:text-white">Settings</h1>
+            <p class="text-gray-600 dark:text-gray-300">Manage your account preferences and application settings</p>
+        </div>
+        
+        <!-- Settings Tabs -->
+        <div class="border-b border-gray-200 mb-6 dark:border-gray-700">
+            <div class="flex overflow-x-auto">
+                <button class="tab-button px-6 py-3 text-sm font-medium text-gray-500 whitespace-nowrap tab-active dark:text-gray-400 focus-visible" data-tab="personal">Personal Information</button>
+                <button class="tab-button px-6 py-3 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-gray-400 focus-visible" data-tab="password">Password</button>
+                <button class="tab-button px-6 py-3 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-gray-400 focus-visible" data-tab="notifications">Notifications</button>
+                <button class="tab-button px-6 py-3 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-gray-400 focus-visible" data-tab="display">Display</button>
+                <button class="tab-button px-6 py-3 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-gray-400 focus-visible" data-tab="privacy">Privacy</button>
+            </div>
+        </div>
+        
+        <!-- Personal Information Section -->
+        <div id="personal-section" class="settings-section bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden active dark:bg-gray-900 dark:border-gray-700">
+            <div class="p-6">
+                <div class="mb-8 flex flex-col items-center md:items-start">
+                    <div class="w-32 h-32 relative mb-4">
+                        <div id="profile-image-container" class="w-full h-full bg-gray-200 rounded-full flex items-center justify-center overflow-hidden dark:bg-gray-700">
+                            <span id="profile-initials" class="text-gray-400 dark:text-gray-500"><i class="ri-user-line text-5xl"></i></span>
+                            <img id="profile-image" src="" alt="Profile Photo" class="hidden w-full h-full object-cover">
+                        </div>
+                        <input type="file" id="profile-image-input" accept="image/*" class="hidden">
+                        <button id="upload-profile-image" class="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-white dark:border-gray-900 dark:bg-secondary focus-visible">
+                            <i class="ri-camera-line"></i>
+                        </button>
+                    </div>
+                    <button id="remove-profile-image" class="text-primary text-sm hover:underline dark:text-secondary focus-visible hidden">Remove photo</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Full Name</label>
+                        <input type="text" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary" value="Njanyana Xaba">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Student Number</label>
+                        <input 
+                            type="text" 
+                            class="student-number-field w-full border border-gray-300 rounded-md py-2 px-3 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-white dark:text-black dark:border-gray-300 dark:focus:ring-secondary" 
+                            value="210084750" 
+                            readonly
+                        >
+                        <p class="student-number-note text-xs text-gray-500 mt-1 dark:text-gray-600">Student number cannot be changed</p>
+                    </div>
+                                        
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Email Address</label>
+                        <input type="email" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary" value="210084756@mycput.ac.za">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Department</label>
+                        <input type="text" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary" value="Information Technology">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Course</label>
+                        <input type="text" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary" value="National Diploma in IT">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Year of Study</label>
+                        <select class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary">
+                            <option>First Year</option>
+                            <option selected>Second Year</option>
+                            <option>Third Year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <button class="px-4 py-2 bg-primary text-white rounded-button hover:bg-opacity-90 transition-all dark:bg-secondary focus-visible">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Password Section -->
+        <div id="password-section" class="settings-section bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-gray-900 dark:border-gray-700">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-800 mb-6 dark:text-white">Change Password</h2>
+                
+                <form class="space-y-6 max-w-lg">
+                    <div>
+                        <label for="current-password" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Current Password</label>
+                        <div class="relative">
+                            <input type="password" id="current-password" class="w-full border border-gray-300 rounded-md py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary" placeholder="Enter your current password">
+                            <button type="button" class="toggle-password absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus-visible">
+                                <div class="w-6 h-6 flex items-center justify-center">
+                                    <i class="ri-eye-line"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">New Password</label>
+                        <div class="relative">
+                            <input type="password" id="new-password" class="w-full border border-gray-300 rounded-md py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary" placeholder="Enter new password">
+                            <button type="button" class="toggle-password absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus-visible">
+                                <div class="w-6 h-6 flex items-center justify-center">
+                                    <i class="ri-eye-line"></i>
+                                </div>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 dark:text-gray-400">Password requirements:</p>
+                        <ul class="text-xs text-gray-500 list-disc pl-5 mt-1 space-y-1 dark:text-gray-400">
+                            <li>Minimum 8 characters</li>
+                            <li>At least one uppercase letter</li>
+                            <li>At least one number</li>
+                            <li>At least one special character</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Confirm New Password</label>
+                        <div class="relative">
+                            <input type="password" id="confirm-password" class="w-full border border-gray-300 rounded-md py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary" placeholder="Confirm new password">
+                            <button type="button" class="toggle-password absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus-visible">
+                                <div class="w-6 h-6 flex items-center justify-center">
+                                    <i class="ri-eye-line"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-2">
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-button hover:bg-opacity-90 transition-all dark:bg-secondary focus-visible">
+                            Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Notifications Section -->
+        <div id="notifications-section" class="settings-section bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-gray-900 dark:border-gray-700">
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-4 dark:text-white">Module Tracker</h3>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Receiver emails: select changes to your modules</label>
+                        </div>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-4 dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4 dark:text-white">Push Notifications</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Enable Push Notifications</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Allow the app to send you push notifications</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Grade Updates</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Receive push notifications when new grades are posted</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Assignment Deadlines</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Receive push notifications for upcoming assignment deadlines</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-4 dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4 dark:text-white">Notification Frequency</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-gray-700 mb-2 dark:text-gray-300">Email Digest Frequency</p>
+                                <div class="flex space-x-4">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="email-frequency" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary dark:focus:ring-secondary" checked>
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Immediately</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="email-frequency" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary dark:focus:ring-secondary">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Daily</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="email-frequency" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary dark:focus:ring-secondary">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Weekly</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <p class="text-gray-700 mb-2 dark:text-gray-300">Reminder Timing</p>
+                                <div class="relative w-64">
+                                    <select class="w-full px-4 py-2 pr-8 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:focus:ring-secondary">
+                                        <option value="3" selected>3 days before deadline</option>
+                                        <option value="1">1 day before deadline</option>
+                                        <option value="2">2 days before deadline</option>
+                                        <option value="5">5 days before deadline</option>
+                                        <option value="7">1 week before deadline</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <div class="w-5 h-5 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="button" class="px-4 py-2 bg-primary text-white rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap dark:bg-secondary focus-visible">
+                            Save Notification Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Display Section -->
+        <div id="display-section" class="settings-section bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-gray-900 dark:border-gray-700">
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2 dark:text-white">Dark Mode</h3>
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Switch between light and dark themes</p>
+                            <label class="custom-switch">
+                                <input type="checkbox" id="theme-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2 dark:text-white">Font Size</h3>
+                        <p class="text-sm text-gray-600 mb-3 dark:text-gray-400">Choose your preferred font size for better readability</p>
+                        <div class="flex space-x-2">
+                            <div class="font-size-option dark:text-white" data-size="small">
+                                <span>Small Aa</span>
+                            </div>
+                            <div class="font-size-option active dark:text-white" data-size="medium">
+                                <span>Medium Aa</span>
+                            </div>
+                            <div class="font-size-option dark:text-white" data-size="large">
+                                <span>Large Aa</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2 dark:text-white">Accessibility</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">High Contrast Mode</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Increase contrast for better visibility</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Reduce Animations</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Minimize motion effects throughout the app</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="button" class="px-4 py-2 bg-primary text-white rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap dark:bg-secondary focus-visible">
+                            Save Display Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Privacy Section -->
+        <div id="privacy-section" class="settings-section bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-gray-900 dark:border-gray-700">
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-4 dark:text-white">Data Sharing</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Share Data with Lecturers</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Allow lecturers to access your module progress data</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Anonymous Usage Statistics</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Share anonymous usage data to help improve the platform</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Personalized Recommendations</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Allow the system to make personalized study recommendations</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-4 dark:text-white">Account Security</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Two-Factor Authentication</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Add an extra layer of security to your account</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-700 dark:text-gray-300">Login Notifications</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Receive email alerts for new login attempts</p>
+                                </div>
+                                <label class="custom-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="button" class="px-4 py-2 bg-primary text-white rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap dark:bg-secondary focus-visible">
+                            Save Privacy Settings
+                        </button>
+                    </div>
+                    
+                    <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-red-600 mb-2">Danger Zone</h3>
+                        <p class="text-sm text-gray-600 mb-4 dark:text-gray-400">These actions are permanent and cannot be undone</p>
+                        <div class="space-y-3">
+                            <button type="button" class="text-red-600 border border-red-600 px-4 py-2 rounded-button font-medium hover:bg-red-50 transition-all whitespace-nowrap dark:hover:bg-red-900/20 focus-visible">
+                                Delete All My Data
+                            </button>
+                            <button type="button" class="text-red-600 border border-red-600 px-4 py-2 rounded-button font-medium hover:bg-red-50 transition-all whitespace-nowrap ml-3 dark:hover:bg-red-900/20 focus-visible">
+                                Deactivate Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const settingsSections = document.querySelectorAll('.settings-section');
+            
+            // Set initial active tab (Personal Information)
+            tabButtons[0].classList.add('tab-active');
+            tabButtons[0].classList.remove('text-gray-500');
+            document.getElementById('personal-section').classList.add('active');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Update active tab button
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('tab-active');
+                        btn.classList.add('text-gray-500');
+                    });
+                    this.classList.add('tab-active');
+                    this.classList.remove('text-gray-500');
+                    
+                    // Show corresponding section
+                    settingsSections.forEach(section => section.classList.remove('active'));
+                    document.getElementById(`${tabId}-section`).classList.add('active');
+                });
+            });
+            
+            // Toggle password visibility
+            const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+            togglePasswordButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ?
+                        '<div class="w-6 h-6 flex items-center justify-center"><i class="ri-eye-line"></i></div>' :
+                        '<div class="w-6 h-6 flex items-center justify-center"><i class="ri-eye-off-line"></i></div>';
+                });
+            });
+            
+            // Font size selection
+            const fontSizeOptions = document.querySelectorAll('.font-size-option');
+            fontSizeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedSize = this.getAttribute('data-size');
+                    
+                    // Update active option
+                    fontSizeOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Apply font size to body
+                    document.documentElement.className = `text-size-${selectedSize}`;
+                    
+                    // Save preference to localStorage
+                    localStorage.setItem('fontSize', selectedSize);
+                });
+            });
+            
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const html = document.documentElement;
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                html.classList.add('dark');
+                themeToggle.checked = true;
+            }
+            
+            // Check for saved font size
+            const savedFontSize = localStorage.getItem('fontSize') || 'medium';
+            html.className = `text-size-${savedFontSize}`;
+            
+            // Set active font size option
+            document.querySelector(`.font-size-option[data-size="${savedFontSize}"]`).classList.add('active');
+            
+            // Toggle theme from display settings switch
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    html.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
+                
+                // Update the header button state
+                const moonIcon = document.querySelector('#dark-mode-toggle .ri-moon-line');
+                const sunIcon = document.querySelector('#dark-mode-toggle .ri-sun-line');
+                if (this.checked) {
+                    moonIcon.classList.add('hidden');
+                    sunIcon.classList.remove('hidden');
+                } else {
+                    moonIcon.classList.remove('hidden');
+                    sunIcon.classList.add('hidden');
+                }
+            });
+            
+            // Connect header dark mode toggle to theme toggle
+            darkModeToggle.addEventListener('click', function() {
+                themeToggle.checked = !themeToggle.checked;
+                themeToggle.dispatchEvent(new Event('change'));
+            });
+            
+            // User dropdown toggle
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            userMenuButton.addEventListener('click', function() {
+                userDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+            
+            // Add keyboard navigation for tabs
+            tabButtons.forEach(button => {
+                button.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+
+            // Profile image upload functionality
+            const profileImageInput = document.getElementById('profile-image-input');
+            const uploadProfileImage = document.getElementById('upload-profile-image');
+            const removeProfileImage = document.getElementById('remove-profile-image');
+            const profileImage = document.getElementById('profile-image');
+            const profileInitials = document.getElementById('profile-initials');
+            const profileImageContainer = document.getElementById('profile-image-container');
+            const profileAvatar = document.getElementById('profile-avatar');
+
+            // Check for saved profile image
+            const savedProfileImage = localStorage.getItem('profileImage');
+            if (savedProfileImage) {
+                profileImage.src = savedProfileImage;
+                profileImage.classList.remove('hidden');
+                profileInitials.classList.add('hidden');
+                removeProfileImage.classList.remove('hidden');
+                
+                // Update avatar in header
+                profileAvatar.innerHTML = '';
+                const avatarImg = document.createElement('img');
+                avatarImg.src = savedProfileImage;
+                avatarImg.classList.add('w-full', 'h-full', 'rounded-full', 'object-cover');
+                profileAvatar.appendChild(avatarImg);
+            }
+
+            uploadProfileImage.addEventListener('click', function() {
+                profileImageInput.click();
+            });
+
+            profileImageInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        // Set the profile image
+                        profileImage.src = event.target.result;
+                        profileImage.classList.remove('hidden');
+                        profileInitials.classList.add('hidden');
+                        removeProfileImage.classList.remove('hidden');
+                        
+                        // Save to localStorage
+                        localStorage.setItem('profileImage', event.target.result);
+                        
+                        // Update avatar in header
+                        profileAvatar.innerHTML = '';
+                        const avatarImg = document.createElement('img');
+                        avatarImg.src = event.target.result;
+                        avatarImg.classList.add('w-full', 'h-full', 'rounded-full', 'object-cover');
+                        profileAvatar.appendChild(avatarImg);
+                    }
+                    
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            removeProfileImage.addEventListener('click', function() {
+                // Remove profile image
+                profileImage.src = '';
+                profileImage.classList.add('hidden');
+                profileInitials.classList.remove('hidden');
+                removeProfileImage.classList.add('hidden');
+                
+                // Remove from localStorage
+                localStorage.removeItem('profileImage');
+                
+                // Reset avatar in header
+                profileAvatar.innerHTML = 'NX';
+            });
+
+            // Notifications functionality
+            const notificationsButton = document.getElementById('notifications-button');
+            const notificationsDropdown = document.getElementById('notifications-dropdown');
+            const notificationIndicator = document.getElementById('notification-indicator');
+
+            if (notificationsButton && notificationsDropdown) {
+                notificationsButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    notificationsDropdown.classList.toggle('hidden');
+                });
+                
+                const markAsReadButtons = document.querySelectorAll('.mark-as-read');
+                markAsReadButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const notificationItem = this.closest('.notification-item');
+                        notificationItem.classList.remove('unread');
+                        this.style.display = 'none';
+                        
+                        // Check if there are any remaining unread notifications
+                        const unreadNotifications = document.querySelectorAll('.notification-item.unread');
+                        if (unreadNotifications.length === 0) {
+                            notificationIndicator.classList.add('hidden');
+                        }
+                    });
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (!notificationsButton.contains(e.target) && !notificationsDropdown.contains(e.target)) {
+                        notificationsDropdown.classList.add('hidden');
+                    }
+                });
+                
+                // View all notifications
+                const viewAllNotifications = document.getElementById('view-all-notifications');
+                if (viewAllNotifications) {
+                    viewAllNotifications.addEventListener('click', function() {
+                        // Implement your "View All" functionality here
+                        alert('Viewing all notifications');
+                        notificationsDropdown.classList.add('hidden');
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

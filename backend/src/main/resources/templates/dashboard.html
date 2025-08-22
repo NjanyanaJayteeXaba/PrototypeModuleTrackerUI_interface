@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Module Tracker - Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    .header { display: flex; justify-content: space-between; align-items: center; }
+    .modules { margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
+    .alert { background: #fff3f3; border: 1px solid #ffb3b3; color: #a30000; padding: 12px; border-radius: 6px; margin-top: 12px; }
+  </style>
+</head>
+<body>
+<div class="header">
+  <h2 th:text="'Welcome, ' + ${fullName} + '!'">Welcome</h2>
+  <div>
+    <a href="/h2-console" target="_blank">H2 Console</a> |
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+
+<h3>Your Modules</h3>
+<div class="modules">
+  <div class="card" th:each="entry : ${moduleAverages}">
+    <h4 th:text="${entry.key.module.moduleCode} + ' - ' + ${entry.key.module.moduleName}">Module</h4>
+    <p>Average:
+      <b th:text="${#numbers.formatDecimal(entry.value, 1, 'POINT', 1, 'POINT')}">0.0</b>%
+    </p>
+    <div class="alert" th:if="${entry.value} &lt; 50.0">
+      Your average in <span th:text="${entry.key.module.moduleName}">Module</span> is below 50%. Tutoring is recommended.
+    </div>
+  </div>
+</div>
+</body>
+</html>

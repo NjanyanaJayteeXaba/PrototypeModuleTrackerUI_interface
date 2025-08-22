@@ -13,7 +13,7 @@ public class User {
     private String studentNumber;
 
     @Column(nullable = false)
-    private String password; // BCrypt
+    private String password; // BCrypt hashed
 
     private String fullName;
 

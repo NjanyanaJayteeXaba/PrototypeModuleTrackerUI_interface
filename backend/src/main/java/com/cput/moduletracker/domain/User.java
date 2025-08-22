@@ -3,7 +3,7 @@ package com.cput.moduletracker.domain;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "USER", uniqueConstraints = @UniqueConstraint(columnNames = "studentNumber"))
+@Table(name = "app_user", uniqueConstraints = @UniqueConstraint(columnNames = "studentNumber"))
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

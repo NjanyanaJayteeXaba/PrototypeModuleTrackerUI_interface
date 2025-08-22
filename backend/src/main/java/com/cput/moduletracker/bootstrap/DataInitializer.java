@@ -1,6 +1,7 @@
 package com.cput.moduletracker.bootstrap;
 
 import com.cput.moduletracker.domain.*;
+import com.cput.moduletracker.domain.Module;
 import com.cput.moduletracker.repo.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;

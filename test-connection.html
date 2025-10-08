@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Appwrite Test</title>
+</head>
+<body>
+    <h2>Testing Appwrite Connection...</h2>
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@11.0.0"></script>
+    <script src="config.js"></script>
+    <script>
+        async function test() {
+            const result = document.getElementById('result');
+            try {
+                console.log('Testing Appwrite connection...');
+                
+                const client = new Appwrite.Client();
+                client
+                    .setEndpoint(APPWRITE_CONFIG.endpoint)
+                    .setProject(APPWRITE_CONFIG.projectId);
+
+                const databases = new Appwrite.Databases(client);
+                
+                // Test 1: List databases
+                const dbs = await databases.list();
+                console.log('Databases:', dbs);
+                
+                // Test 2: Try to access users collection
+                const users = await databases.listDocuments(
+                    APPWRITE_CONFIG.databaseId,
+                    APPWRITE_CONFIG.collections.users
+                );
+                
+                result.innerHTML = '✅ SUCCESS! Connected to Appwrite';
+                result.style.color = 'green';
+                console.log('Users collection:', users);
+                
+            } catch (error) {
+                result.innerHTML = '❌ ERROR: ' + error.message;
+                result.style.color = 'red';
+                console.error('Failed:', error);
+            }
+        }
+        test();
+    </script>
+</body>
+</html>

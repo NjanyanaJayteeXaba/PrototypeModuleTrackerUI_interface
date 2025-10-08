@@ -1,17 +1,47 @@
-# Appwrite configuration
+# Appwrite Configuration (Sensitive - contains API keys)
 config.js
 
-# Environment variables
+# Environment Variables (Sensitive)
 .env
+.env.local
+.env.production
+.env.development
 
-# IDE files
+# IDE and Editor files
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
-# OS files
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Logs
 *.log
-config.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional: if you have Node.js dependencies
+node_modules/
+
+# Optional: if you have build outputs
+/dist
+/build
+
+# CPUT Module Tracker specific
+*.backup
+*.tmp
